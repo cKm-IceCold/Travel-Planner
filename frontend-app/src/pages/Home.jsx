@@ -9,20 +9,19 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredDestinations = destinations.filter((d) =>
-    d.city.toLowerCase().includes(searchTerm.toLowerCase())
+    d.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.country.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Show only top 6 by default, or all matching results if searching
+  const displayDestinations = searchTerm ? filteredDestinations : destinations.slice(0, 6);
 
   return (
     <>
       {/* 1. HERO - Sets the stage */}
       <Hero />
 
-      {/* 
-         2. FLOATING SEARCH BAR 
-         - Uses negative margin to pull it UP onto the Hero.
-         - 'max-w-3xl' makes it wider and more commanding.
-         - 'backdrop-blur-md' gives it that premium glass feel.
-      */}
+      {/* 2. FLOATING SEARCH BAR */}
       <div className="relative z-20 -mt-24 px-4 mb-20">
         <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-md p-2 rounded-full shadow-2xl border border-white/40 flex items-center">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -39,12 +38,16 @@ const Home = () => {
       {/* 3. MAIN CONTENT */}
       <div className="pb-20">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-4xl font-bold text-slate-800 mb-2">Popular Destinations</h2>
+          <h2 className="font-serif text-4xl font-bold text-slate-800 mb-2">
+            {searchTerm ? `Results for "${searchTerm}"` : "Popular Destinations"}
+          </h2>
           <div className="h-1 w-20 bg-blue-600 mx-auto rounded-full"></div>
-          <p className="text-slate-500 mt-4">Places that are trending right now.</p>
+          <p className="text-slate-500 mt-4">
+            {searchTerm ? "Found these amazing places for you." : "Places that are trending right now."}
+          </p>
         </div>
 
-        <DestinationList destinations={filteredDestinations} />
+        <DestinationList destinations={displayDestinations} />
       </div>
 
       {/* 4. ABOUT SECTION */}

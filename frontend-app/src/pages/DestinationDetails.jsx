@@ -6,10 +6,33 @@ const DestinationDetails = () => {
   const { id } = useParams();
   const { addToItinerary, isInItinerary } = useItinerary();
 
-  const destination = destinations.find(
-    (d) => d.id === Number(id)
+  /* 
+   * Handle ID lookup for both:
+   * 1. Local Data (Numbers, e.g., 1, 2)
+   * 2. API Data (Strings, e.g., "CMUC5234")
+   * 
+   * Ideal Solution: We should fetch from API if not found in local.
+   * For now, we'll try to find it in the local list, and if not, show a generic "API Result" view 
+   * since we don't have a "Get Destination by ID" API endpoint wired up yet.
+   */
+  const localDestination = destinations.find(
+    (d) => String(d.id) === String(id)
   );
 
+  // If it's a real API result (not in local file), we render a generic view
+  // In a real app, we would call `amadeus.getDestinationDetails(id)` here.
+  const destination = localDestination || {
+    id: id,
+    city: "Unknown City", // We'd need to pass this via state or fetch it
+    country: "World",
+    image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
+    price: "$TBD",
+    rating: "N/A",
+    attractions: ["City Center", "Local Landmarks"],
+    label: "API Result"
+  };
+
+  // If we really can't render anything useful (though the fallback above handles most cases)
   if (!destination) {
     return (
       <div className="flex items-center justify-center h-[50vh]">
@@ -89,8 +112,8 @@ const DestinationDetails = () => {
               onClick={() => addToItinerary(destination)}
               disabled={isAdded}
               className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg transform active:scale-95 ${isAdded
-                  ? "bg-green-100 text-green-700 cursor-default border border-green-200"
-                  : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-200"
+                ? "bg-green-100 text-green-700 cursor-default border border-green-200"
+                : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-200"
                 }`}
             >
               {isAdded ? "✓ Added to Itinerary" : "Add to Itinerary"}
