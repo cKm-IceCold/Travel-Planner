@@ -7,9 +7,7 @@ const Itinerary = () => {
     const navigate = useNavigate();
 
     const handleBooking = () => {
-        // Here you would normally send data to a backend
-        clearItinerary();
-        navigate('/booking-success');
+        navigate('/checkout');
     }
 
     // Helper to calculate total (strips '$' and ',' to sum)
@@ -93,7 +91,7 @@ const Itinerary = () => {
                             onClick={handleBooking}
                             className="w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors shadow-lg"
                         >
-                            Proceed to Booking
+                            Proceed to Checkout
                         </button>
                         <p className="text-center text-xs text-slate-500 mt-4">Taxes and fees calculated at next step.</p>
                     </div>

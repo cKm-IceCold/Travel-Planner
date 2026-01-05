@@ -17,6 +17,8 @@ function App() {
         <Route path="/destinations/:id" element={<DestinationDetails />} />
         {/* "/itinerary" → Itinerary Summary page */}
         <Route path="/itinerary" element={<Itinerary />} />
+        {/* "/checkout" → Checkout page */}
+        <Route path="/checkout" element={<Checkout />} />
         {/* "/booking-success" → Success page */}
         <Route path="/booking-success" element={<BookingSuccess />} />
       </Routes>
@@ -29,6 +31,7 @@ function App() {
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import BookingSuccess from "./pages/BookingSuccess";
+import Checkout from "./pages/Checkout";
 
 const PageTitleUpdater = () => {
   const location = useLocation();
@@ -40,6 +43,7 @@ const PageTitleUpdater = () => {
     if (path === "/") title = "Home | Travel Planner";
     else if (path.includes("/destinations/")) title = "Destination Details | Travel Planner";
     else if (path === "/itinerary") title = "My Trip | Travel Planner";
+    else if (path === "/checkout") title = "Secure Checkout | Travel Planner";
     else if (path === "/booking-success") title = "Booking Confirmed! | Travel Planner";
 
     document.title = title;

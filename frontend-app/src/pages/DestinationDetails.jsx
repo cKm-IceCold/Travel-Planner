@@ -1,6 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import destinations from "../components/data/destinations";
 import { useItinerary } from "../context/ItineraryContext";
+import { getHotelsByDestination } from "../components/data/hotels";
+import HotelCard from "../components/HotelCard";
 
 const DestinationDetails = () => {
   const { id } = useParams();
@@ -126,6 +128,20 @@ const DestinationDetails = () => {
         </div>
 
       </div>
+
+      {/* 3. WHERE TO STAY */}
+      <div className="bg-slate-50 py-16 border-t border-slate-200">
+        <div className="max-w-5xl mx-auto px-6">
+          <h2 className="text-3xl font-serif font-bold text-slate-800 mb-8">Where to Stay</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {getHotelsByDestination(destination.id).map(hotel => (
+              <HotelCard key={hotel.id} hotel={hotel} />
+            ))}
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
