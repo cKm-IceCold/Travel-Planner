@@ -8,6 +8,7 @@ import Footer from "./components/Footer"; // Import Footer
 function App() {
   return (
     <>
+      <PageTitleUpdater />
       <NavBar />
       <Routes>
         {/* "/" → Home page */}
@@ -16,10 +17,35 @@ function App() {
         <Route path="/destinations/:id" element={<DestinationDetails />} />
         {/* "/itinerary" → Itinerary Summary page */}
         <Route path="/itinerary" element={<Itinerary />} />
+        {/* "/booking-success" → Success page */}
+        <Route path="/booking-success" element={<BookingSuccess />} />
       </Routes>
       <Footer />
     </>
   );
 }
+
+// Helper to update Title based on Route (Simple implementation)
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import BookingSuccess from "./pages/BookingSuccess";
+
+const PageTitleUpdater = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    let title = "Travel Planner | Explore the World";
+
+    if (path === "/") title = "Home | Travel Planner";
+    else if (path.includes("/destinations/")) title = "Destination Details | Travel Planner";
+    else if (path === "/itinerary") title = "My Trip | Travel Planner";
+    else if (path === "/booking-success") title = "Booking Confirmed! | Travel Planner";
+
+    document.title = title;
+  }, [location]);
+
+  return null;
+};
 
 export default App;

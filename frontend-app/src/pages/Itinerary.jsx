@@ -1,9 +1,16 @@
 import React from 'react';
 import { useItinerary } from '../context/ItineraryContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Itinerary = () => {
-    const { itinerary, removeFromItinerary } = useItinerary();
+    const { itinerary, removeFromItinerary, clearItinerary } = useItinerary();
+    const navigate = useNavigate();
+
+    const handleBooking = () => {
+        // Here you would normally send data to a backend
+        clearItinerary();
+        navigate('/booking-success');
+    }
 
     // Helper to calculate total (strips '$' and ',' to sum)
     const calculateTotal = () => {
@@ -82,7 +89,10 @@ const Itinerary = () => {
                             <span className="text-3xl font-bold">${calculateTotal().toLocaleString()}</span>
                         </div>
 
-                        <button className="w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors shadow-lg">
+                        <button
+                            onClick={handleBooking}
+                            className="w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors shadow-lg"
+                        >
                             Proceed to Booking
                         </button>
                         <p className="text-center text-xs text-slate-500 mt-4">Taxes and fees calculated at next step.</p>

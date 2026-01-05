@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+    const [email, setEmail] = useState("");
+    const [subscribed, setSubscribed] = useState(false);
+
+    const handleSubscribe = () => {
+        if (email) {
+            setSubscribed(true);
+            setEmail("");
+        }
+    };
+
     return (
         <footer className="bg-slate-900 text-white pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
@@ -23,7 +33,7 @@ const Footer = () => {
                         <li><Link to="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
                         <li><Link to="/" className="hover:text-blue-400 transition-colors">Destinations</Link></li>
                         <li><Link to="/itinerary" className="hover:text-blue-400 transition-colors">My Itinerary</Link></li>
-                        <li><a href="#" className="hover:text-blue-400 transition-colors">About Us</a></li>
+                        <li><a href="#about" className="hover:text-blue-400 transition-colors">About Us</a></li>
                     </ul>
                 </div>
 
@@ -42,16 +52,28 @@ const Footer = () => {
                 <div>
                     <h4 className="font-bold text-lg mb-6 text-white">Stay Updated</h4>
                     <p className="text-slate-400 text-sm mb-4">Subscribe to get the latest travel deals and inspiration.</p>
-                    <div className="flex flex-col gap-3">
-                        <input
-                            type="email"
-                            placeholder="Your email address"
-                            className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                        />
-                        <button className="bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-all">
-                            Subscribe
-                        </button>
-                    </div>
+
+                    {subscribed ? (
+                        <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-sm">
+                            ✨ Thank you! You've been subscribed.
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Your email address"
+                                className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"
+                            />
+                            <button
+                                onClick={handleSubscribe}
+                                className="bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/20"
+                            >
+                                Subscribe
+                            </button>
+                        </div>
+                    )}
                 </div>
 
             </div>

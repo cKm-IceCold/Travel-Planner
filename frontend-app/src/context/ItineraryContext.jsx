@@ -42,11 +42,17 @@ export const ItineraryProvider = ({ children }) => {
         return itinerary.some(item => item.id === id);
     }
 
+    // Clear All (for booking success)
+    const clearItinerary = () => {
+        setItinerary([]);
+    };
+
     const value = {
         itinerary,
         addToItinerary,
         removeFromItinerary,
-        isInItinerary
+        isInItinerary,
+        clearItinerary
     };
 
     return (
