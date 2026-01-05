@@ -9,21 +9,33 @@ A premium React-based travel planning application designed to inspire wanderlust
 - **Modern Typography**: Utilizing `Playfair Display` for editorial headings and `Outfit` for clean, readable body text.
 - **Interactive Cards**: Destination cards feature hover zoom effects, lift animations, and detailed pricing/rating information.
 
-### 🗺️ Destination Discovery
-- **Rich Data**: Browse top destinations (Paris, New York, Tokyo, Bali) with curated images and details.
-- **Real-time Search**: instantly filter destinations by name.
+### 🗺️ Destination Discovery & Features
+- **Hybrid Search Engine**: Instantly switch between curated local destinations and **Amadeus API** live results for global cities.
+- **Smart "See More"**: Expand the list to view 20+ hidden gem locations.
+- **Hotel Integration**: Each destination features a "Where to Stay" section with curated luxury hotels (e.g., The Plaza, Aman Tokyo).
 
-### 📅 Itinerary Planning (In Progress)
-- **Context API**: Global state management for building a trip.
-- **Add to Itinerary**: Dynamically add destinations to your plan.
-- **Cost Estimation**: Automatic calculation of trip costs.
+### ✍️ Travel Stories (Blog System)
+- **Public Blog**: A beautiful grid layout of travel articles.
+- **Full Article View**: Dedicated page for reading immersive stories.
+- **Admin Dashboard**: A built-in CMS allowing admins to write and publish new stories.
+    *   *Powered by Context API & LocalStorage traversal logic (No backend required yet).*
+
+### 🛒 E-Commerce Flow
+- **Itinerary Management**: Add destinations to a persistent cart (Context API).
+- **Secure Checkout**: A realistic checkout form with validation and order summary.
+- **Booking Success**: Visual feedback and animation upon successful "payment".
+
+### 📱 Responsive & Polish
+- **Mobile Menu**: Fully functional hamburger menu with smooth animations.
+- **Dynamic Titles**: Browser tab updates based on the current page.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Routing**: React Router DOM
-- **Icons**: React Icons / SVG
+- **Styling**: [Tailwind CSS v3](https://tailwindcss.com/)
+- **State Management**: React Context API
+- **Routing**: React Router DOM v6
+- **Icons**: Heroicons / SVG
 - **Fonts**: Google Fonts (Outfit, Playfair Display)
 
 ## 📦 Installation
@@ -37,6 +49,12 @@ A premium React-based travel planning application designed to inspire wanderlust
     ```bash
     npm run dev
     ```
+
+## 🔮 Upcoming Features (Phase 3)
+
+- **Firebase Authentication**: User Login/Signup with Google.
+- **Cloud Database**: Move Blogs and Itineraries to Firestore.
+- **User Profiles**: Save trip history and preferences.
 
 ## 🎨 Design Philosophy
 

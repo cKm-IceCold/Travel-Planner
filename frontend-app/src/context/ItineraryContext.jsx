@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { db } from "../services/firebase";
+import { doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { useAuth } from "./AuthContext";
 
 // 1. Create the Context
 const ItineraryContext = createContext();
@@ -9,32 +12,56 @@ export const useItinerary = () => useContext(ItineraryContext);
 // 3. Create the Provider Component
 export const ItineraryProvider = ({ children }) => {
     const [itinerary, setItinerary] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { currentUser } = useAuth();
 
-    // Load from LocalStorage on mount (optional but good for UX)
+    // Sync with Firestore if logged in, else use LocalStorage
     useEffect(() => {
-        const saved = localStorage.getItem("travel-itinerary");
-        if (saved) {
-            setItinerary(JSON.parse(saved));
+        if (!currentUser) {
+            const saved = localStorage.getItem("travel-itinerary");
+            if (saved) setItinerary(JSON.parse(saved));
+            setLoading(false);
+            return;
         }
-    }, []);
 
-    // Save to LocalStorage whenever itinerary changes
-    useEffect(() => {
-        localStorage.setItem("travel-itinerary", JSON.stringify(itinerary));
-    }, [itinerary]);
+        const userDocRef = doc(db, "itineraries", currentUser.uid);
+        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setItinerary(docSnap.data().items || []);
+            } else {
+                // Initialize empty doc for new user
+                setDoc(userDocRef, { items: [] });
+                setItinerary([]);
+            }
+            setLoading(false);
+        });
+
+        return unsubscribe;
+    }, [currentUser]);
+
+    // Helper to update Firestore/Local
+    const updateStorage = async (newItinerary) => {
+        setItinerary(newItinerary);
+        if (currentUser) {
+            const userDocRef = doc(db, "itineraries", currentUser.uid);
+            await setDoc(userDocRef, { items: newItinerary }, { merge: true });
+        } else {
+            localStorage.setItem("travel-itinerary", JSON.stringify(newItinerary));
+        }
+    };
 
     // Add Item
     const addToItinerary = (destination) => {
-        // Prevent duplicates
         if (!itinerary.find((item) => item.id === destination.id)) {
-            // We can add a "default" selection like 1 person or 3 days here if we wanted complex logic
-            setItinerary([...itinerary, { ...destination, dateAdded: new Date().toISOString() }]);
+            const newList = [...itinerary, { ...destination, dateAdded: new Date().toISOString() }];
+            updateStorage(newList);
         }
     };
 
     // Remove Item
     const removeFromItinerary = (id) => {
-        setItinerary(itinerary.filter((item) => item.id !== id));
+        const newList = itinerary.filter((item) => item.id !== id);
+        updateStorage(newList);
     };
 
     // Check if item exists
@@ -44,7 +71,7 @@ export const ItineraryProvider = ({ children }) => {
 
     // Clear All (for booking success)
     const clearItinerary = () => {
-        setItinerary([]);
+        updateStorage([]);
     };
 
     const value = {
@@ -52,7 +79,8 @@ export const ItineraryProvider = ({ children }) => {
         addToItinerary,
         removeFromItinerary,
         isInItinerary,
-        clearItinerary
+        clearItinerary,
+        loading
     };
 
     return (

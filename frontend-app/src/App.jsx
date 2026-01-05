@@ -27,6 +27,9 @@ function App() {
         <Route path="/blogs/:id" element={<BlogDetails />} />
         {/* "/admin" → Admin Dashboard */}
         <Route path="/admin" element={<AdminBlog />} />
+        {/* Auth Pages */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
       <Footer />
     </>
@@ -41,6 +44,8 @@ import Checkout from "./pages/Checkout";
 import Blogs from "./pages/Blogs";
 import AdminBlog from "./pages/AdminBlog";
 import BlogDetails from "./pages/BlogDetails";
+import Login from "./pages/Login";
+import Signup from "./pages/SignUp";
 
 const PageTitleUpdater = () => {
   const location = useLocation();
@@ -57,6 +62,8 @@ const PageTitleUpdater = () => {
     else if (path === "/blogs" && path.split("/").length === 2) title = "Travel Stories | Travel Planner";
     else if (path.includes("/blogs/")) title = "Story | Travel Planner";
     else if (path === "/admin") title = "Admin Dashboard | Travel Planner";
+    else if (path === "/login") title = "Login | Travel Planner";
+    else if (path === "/signup") title = "Create Account | Travel Planner";
 
     document.title = title;
   }, [location]);

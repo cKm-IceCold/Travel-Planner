@@ -14,21 +14,30 @@ const AdminBlog = () => {
         content: ""
     });
 
+    const [publishing, setPublishing] = useState(false);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setPublishing(true);
 
-        // Use a default image if none provided
-        const blogPayload = {
-            ...formData,
-            image: formData.image || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
-        };
+        try {
+            // Use a default image if none provided
+            const blogPayload = {
+                ...formData,
+                image: formData.image || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
+            };
 
-        addBlog(blogPayload);
-        navigate('/blogs'); // go back to list
+            await addBlog(blogPayload);
+            navigate('/blogs'); // go back to list
+        } catch (error) {
+            alert("Failed to publish: " + error.message);
+        } finally {
+            setPublishing(false);
+        }
     };
 
     return (
@@ -116,8 +125,13 @@ const AdminBlog = () => {
 
                     <div className="pt-4 flex items-center justify-end gap-4">
                         <button type="button" onClick={() => navigate('/blogs')} className="text-slate-500 font-bold hover:text-slate-700">Cancel</button>
-                        <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-all">
-                            Publish Story
+                        <button
+                            type="submit"
+                            disabled={publishing}
+                            className={`bg-blue-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg ${publishing ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+                                }`}
+                        >
+                            {publishing ? "Publishing..." : "Publish Story"}
                         </button>
                     </div>
 

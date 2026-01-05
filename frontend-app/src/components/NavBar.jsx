@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useItinerary } from '../context/ItineraryContext';
+import { useAuth } from '../context/AuthContext';
 
 const NavBar = () => {
   const { itinerary } = useItinerary();
+  const { currentUser, logout } = useAuth();
   const itemCount = itinerary.length;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -38,12 +40,26 @@ const NavBar = () => {
 
       {/* 3. Desktop Auth Buttons */}
       <div className="hidden md:flex items-center gap-4">
-        <button className="text-sm font-semibold text-slate-600 hover:text-blue-600">
-          Login
-        </button>
-        <button className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all shadow-md active:scale-95">
-          Sign Up
-        </button>
+        {currentUser ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-bold text-slate-800">Hi, {currentUser.displayName || "Traveler"}</span>
+            <button
+              onClick={logout}
+              className="text-sm font-semibold text-slate-500 hover:text-red-600 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600">
+              Login
+            </Link>
+            <Link to="/signup" className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all shadow-md active:scale-95">
+              Sign Up
+            </Link>
+          </>
+        )}
       </div>
 
       {/* 4. Mobile Menu Button (Hamburger) */}
@@ -77,8 +93,17 @@ const NavBar = () => {
             About
           </a>
           <div className="flex flex-col gap-3 mt-4">
-            <button className="w-full py-3 text-slate-600 font-semibold border border-slate-200 rounded-lg">Login</button>
-            <button className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg">Sign Up</button>
+            {currentUser ? (
+              <>
+                <p className="text-center text-slate-800 font-bold mb-2">Hi, {currentUser.displayName}</p>
+                <button onClick={logout} className="w-full py-3 text-red-600 font-bold border border-red-100 bg-red-50 rounded-lg">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="w-full py-3 text-center text-slate-600 font-semibold border border-slate-200 rounded-lg" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link to="/signup" className="w-full py-3 text-center bg-blue-600 text-white font-bold rounded-lg shadow-lg" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+              </>
+            )}
           </div>
         </div>
       )}

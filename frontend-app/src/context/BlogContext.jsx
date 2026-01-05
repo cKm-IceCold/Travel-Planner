@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { initialBlogs } from "../components/data/blogs";
+import { db } from "../services/firebase";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { useAuth } from "./AuthContext";
 
 const BlogContext = createContext();
 
@@ -7,39 +10,54 @@ export const useBlog = () => useContext(BlogContext);
 
 export const BlogProvider = ({ children }) => {
     const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { currentUser } = useAuth();
 
-    // Load from LocalStorage or use specific defaults
+    // Listen to Firestore updates
     useEffect(() => {
-        const saved = localStorage.getItem("travel-blogs");
-        if (saved) {
-            setBlogs(JSON.parse(saved));
-        } else {
-            setBlogs(initialBlogs);
-        }
+        const blogsRef = collection(db, "blogs");
+        const q = query(blogsRef, orderBy("id", "desc"));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const blogsData = snapshot.docs.map(doc => ({
+                docId: doc.id, // Firestore document ID
+                ...doc.data()
+            }));
+
+            // If Firestore is empty (first time setup), we could theoretically 
+            // seed it here, but typically we'd do a manual migration or check.
+            // For now, if empty, we show initialBlogs but don't save them back yet.
+            if (blogsData.length === 0) {
+                setBlogs(initialBlogs);
+            } else {
+                setBlogs(blogsData);
+            }
+            setLoading(false);
+        });
+
+        return unsubscribe;
     }, []);
 
-    // Save to LocalStorage whenever blogs change
-    useEffect(() => {
-        // Avoid overwriting with empty array on initial mount before load
-        if (blogs.length > 0) {
-            localStorage.setItem("travel-blogs", JSON.stringify(blogs));
-        }
-    }, [blogs]);
+    const addBlog = async (newBlog) => {
+        try {
+            const blogEntry = {
+                id: Date.now(), // timestamp for sorting
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                author: currentUser?.displayName || currentUser?.email || "Anonymous",
+                ...newBlog
+            };
 
-    const addBlog = (newBlog) => {
-        // Create full blog object with dynamic fields
-        const blogEntry = {
-            id: Date.now(), // Unique ID
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            author: "Admin User", // Default for now
-            ...newBlog
-        };
-        setBlogs([blogEntry, ...blogs]); // Prepend to list (newest first)
+            await addDoc(collection(db, "blogs"), blogEntry);
+        } catch (error) {
+            console.error("Error adding blog to Firestore:", error);
+            // Fallback for local UI update if desired
+        }
     };
 
     const value = {
         blogs,
-        addBlog
+        addBlog,
+        loading
     };
 
     return (
