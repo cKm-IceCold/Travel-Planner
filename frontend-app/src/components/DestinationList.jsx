@@ -10,15 +10,18 @@ const DestinationList = ({ destinations }) => {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <div className="max-w-7xl mx-auto px-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {destinations.map((destination) => (
-       <DestinationCard
-  key={destination.id}
-  id={destination.id}
-  city={destination.city}
-  country={destination.country}
-  attractions={destination.attractions}
-/>
+        <DestinationCard
+          key={destination.id}
+          id={destination.id}
+          city={destination.city}
+          country={destination.country}
+          image={destination.image}
+          price={destination.price}
+          rating={destination.rating}
+          label={destination.label}
+        />
 
       ))}
     </div>
@@ -27,4 +30,3 @@ const DestinationList = ({ destinations }) => {
 
 export default DestinationList;
 
-  

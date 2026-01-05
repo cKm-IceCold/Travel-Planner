@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+
+
+body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    /* Very light slate for premium feel */
+    color: #1e293b;
+}
+
+/* Custom Scrollbar for Chrome/Safari/Webkit */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+}

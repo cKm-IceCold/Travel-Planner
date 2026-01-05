@@ -1,15 +1,16 @@
-const SearchBar = ({searchTerm, setSearchTerm}) => {
+const SearchBar = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="mb-4">
-      <input 
-       type="text" 
-       placeholder="Search for destinations..." 
-       value={searchTerm} 
-       onChange={(e) => setSearchTerm(e.target.value)}
-       className="w-full p-3 border rounded mb-6"
-    />
+    <div className="w-full">
+      <input
+        type="text"
+        placeholder="Where do you want to go?"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        // Styled to look cleaner inside the container
+        className="w-full p-4 outline-none text-slate-700 bg-transparent placeholder-slate-400"
+      />
     </div>
-    );
+  );
 };
 
 export default SearchBar; 
