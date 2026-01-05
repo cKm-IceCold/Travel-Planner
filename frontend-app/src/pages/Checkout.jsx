@@ -3,7 +3,7 @@ import { useItinerary } from "../context/ItineraryContext";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-    const { itinerary, clearItinerary } = useItinerary();
+    const { itinerary, clearItinerary, moveToHistory } = useItinerary();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -41,15 +41,18 @@ const Checkout = () => {
         return Object.keys(tempErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
             setIsProcessing(true);
-            // Simulate Payment Processing
+            // 1. Save to History
+            await moveToHistory(itinerary);
+
+            // 2. Simulate Payment Processing
             setTimeout(() => {
                 clearItinerary();
                 navigate("/booking-success");
-            }, 2000); // 2 seconds for dramatic effect
+            }, 2000);
         }
     };
 

@@ -12,6 +12,7 @@ export const useItinerary = () => useContext(ItineraryContext);
 // 3. Create the Provider Component
 export const ItineraryProvider = ({ children }) => {
     const [itinerary, setItinerary] = useState([]);
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const { currentUser } = useAuth();
 
@@ -24,19 +25,33 @@ export const ItineraryProvider = ({ children }) => {
             return;
         }
 
+        // 1. Sync Itinerary (Wishlist)
         const userDocRef = doc(db, "itineraries", currentUser.uid);
-        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        const unsubscribeItinerary = onSnapshot(userDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 setItinerary(docSnap.data().items || []);
             } else {
-                // Initialize empty doc for new user
                 setDoc(userDocRef, { items: [] });
                 setItinerary([]);
+            }
+        });
+
+        // 2. Sync Travel History (Booked)
+        const historyDocRef = doc(db, "history", currentUser.uid);
+        const unsubscribeHistory = onSnapshot(historyDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setHistory(docSnap.data().items || []);
+            } else {
+                setDoc(historyDocRef, { items: [] });
+                setHistory([]);
             }
             setLoading(false);
         });
 
-        return unsubscribe;
+        return () => {
+            unsubscribeItinerary();
+            unsubscribeHistory();
+        };
     }, [currentUser]);
 
     // Helper to update Firestore/Local
@@ -48,6 +63,14 @@ export const ItineraryProvider = ({ children }) => {
         } else {
             localStorage.setItem("travel-itinerary", JSON.stringify(newItinerary));
         }
+    };
+
+    // Move items to History (called on successful checkout)
+    const moveToHistory = async (items) => {
+        if (!currentUser) return;
+        const newHistory = [...history, ...items.map(item => ({ ...item, bookingDate: new Date().toISOString() }))];
+        const historyDocRef = doc(db, "history", currentUser.uid);
+        await setDoc(historyDocRef, { items: newHistory }, { merge: true });
     };
 
     // Add Item
@@ -76,10 +99,12 @@ export const ItineraryProvider = ({ children }) => {
 
     const value = {
         itinerary,
+        history,
         addToItinerary,
         removeFromItinerary,
         isInItinerary,
         clearItinerary,
+        moveToHistory,
         loading
     };
 

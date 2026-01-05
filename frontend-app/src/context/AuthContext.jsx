@@ -39,6 +39,16 @@ export const AuthProvider = ({ children }) => {
         return signOut(auth);
     };
 
+    const updateProfileInfo = (name, photo) => {
+        return updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: photo
+        }).then(() => {
+            // Force refresh user state
+            setCurrentUser({ ...auth.currentUser });
+        });
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
@@ -53,7 +63,8 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         googleLogin,
-        logout
+        logout,
+        updateProfileInfo
     };
 
     return (

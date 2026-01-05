@@ -38,31 +38,34 @@ const NavBar = () => {
         </a>
       </div>
 
-      {/* 3. Desktop Auth Buttons */}
+      {/* 3. Desktop Auth Buttons (Updated) */}
       <div className="hidden md:flex items-center gap-4">
         {currentUser ? (
           <div className="flex items-center gap-4">
-            <span className="text-sm font-bold text-slate-800">Hi, {currentUser.displayName || "Traveler"}</span>
+            <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <img
+                src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || 'User'}`}
+                alt="Avatar"
+                className="w-8 h-8 rounded-full border border-slate-200"
+              />
+              <span className="text-sm font-bold text-slate-700">{currentUser.displayName || 'User'}</span>
+            </Link>
             <button
               onClick={logout}
-              className="text-sm font-semibold text-slate-500 hover:text-red-600 transition-colors"
+              className="px-5 py-2 rounded-full border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
             >
               Logout
             </button>
           </div>
         ) : (
           <>
-            <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600">
-              Login
-            </Link>
-            <Link to="/signup" className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-all shadow-md active:scale-95">
-              Sign Up
-            </Link>
+            <Link to="/login" className="text-slate-600 font-bold hover:text-blue-600 transition-colors">Login</Link>
+            <Link to="/signup" className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200">Sign Up</Link>
           </>
         )}
       </div>
 
-      {/* 4. Mobile Menu Button (Hamburger) */}
+      {/* 4. Mobile Menu Button (Hamburger) (Updated) */}
       <button
         className="md:hidden text-slate-600 focus:outline-none"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -76,9 +79,9 @@ const NavBar = () => {
         </svg>
       </button>
 
-      {/* 5. Mobile Menu Overlay */}
+      {/* 5. Mobile Menu Overlay (Updated) */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 shadow-xl p-6 md:hidden flex flex-col gap-4 animate-in slide-in-from-top-2">
+        <div className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xl p-6 md:hidden flex flex-col gap-4 animate-in slide-in-from-top-2">
           <Link to="/" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             Explore
           </Link>
@@ -92,11 +95,12 @@ const NavBar = () => {
           <a href="#about" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             About
           </a>
+          {currentUser && <Link to="/profile" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>Profile</Link>}
           <div className="flex flex-col gap-3 mt-4">
             {currentUser ? (
               <>
                 <p className="text-center text-slate-800 font-bold mb-2">Hi, {currentUser.displayName}</p>
-                <button onClick={logout} className="w-full py-3 text-red-600 font-bold border border-red-100 bg-red-50 rounded-lg">Logout</button>
+                <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full py-3 text-red-600 font-bold border border-red-100 bg-red-50 rounded-lg">Logout</button>
               </>
             ) : (
               <>

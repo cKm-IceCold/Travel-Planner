@@ -31,9 +31,12 @@ function App() {
             <AdminBlog />
           </ProtectedRoute>
         } />
-        {/* Auth Pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* "/logout" logic is handled in NavBar, but let's add Profile */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
       </Routes>
       <Footer />
     </>
@@ -50,6 +53,7 @@ import AdminBlog from "./pages/AdminBlog";
 import BlogDetails from "./pages/BlogDetails";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
+import Profile from "./pages/Profile";
 import { useAuth } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
@@ -82,6 +86,7 @@ const PageTitleUpdater = () => {
     else if (path === "/admin") title = "Admin Dashboard | Travel Planner";
     else if (path === "/login") title = "Login | Travel Planner";
     else if (path === "/signup") title = "Create Account | Travel Planner";
+    else if (path === "/profile") title = "My Profile | Travel Planner";
 
     document.title = title;
   }, [location]);
