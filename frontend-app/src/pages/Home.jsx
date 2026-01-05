@@ -3,6 +3,7 @@ import SearchBar from "../components/SearchBar";
 import DestinationList from "../components/DestinationList";
 import destinations from "../components/data/destinations";
 import Hero from "../components/Hero";
+import About from "../components/About";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,6 +46,10 @@ const Home = () => {
 
         <DestinationList destinations={filteredDestinations} />
       </div>
+
+      {/* 4. ABOUT SECTION */}
+      <About />
+
     </>
   );
 };

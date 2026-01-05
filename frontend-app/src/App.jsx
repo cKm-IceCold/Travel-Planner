@@ -3,6 +3,7 @@ import Home from "./pages/Home"; // Home page
 import DestinationDetails from "./pages/DestinationDetails"; // Details page
 import NavBar from "./components/NavBar"; // Import NavBar
 import Itinerary from "./pages/Itinerary"; // Import Itinerary page
+import Footer from "./components/Footer"; // Import Footer
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         {/* "/itinerary" → Itinerary Summary page */}
         <Route path="/itinerary" element={<Itinerary />} />
       </Routes>
+      <Footer />
     </>
   );
 }
