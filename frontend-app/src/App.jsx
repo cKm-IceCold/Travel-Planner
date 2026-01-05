@@ -25,8 +25,12 @@ function App() {
         <Route path="/blogs" element={<Blogs />} />
         {/* "/blogs/:id" → Blog Details */}
         <Route path="/blogs/:id" element={<BlogDetails />} />
-        {/* "/admin" → Admin Dashboard */}
-        <Route path="/admin" element={<AdminBlog />} />
+        {/* "/admin" → Admin Dashboard (Protected) */}
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminBlog />
+          </ProtectedRoute>
+        } />
         {/* Auth Pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -46,6 +50,20 @@ import AdminBlog from "./pages/AdminBlog";
 import BlogDetails from "./pages/BlogDetails";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
+import { useAuth } from "./context/AuthContext";
+import { Navigate } from "react-router-dom";
+
+const ProtectedRoute = ({ children }) => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) return null; // or a spinner
+
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 const PageTitleUpdater = () => {
   const location = useLocation();
