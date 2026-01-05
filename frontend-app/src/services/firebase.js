@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDQaV2bev2DAhuyDjPtJFhYG1ejKqUYApY",
+    apiKey: "",
     authDomain: "travel-plan-2.firebaseapp.com",
     projectId: "travel-plan-2",
     storageBucket: "travel-plan-2.firebasestorage.app",
