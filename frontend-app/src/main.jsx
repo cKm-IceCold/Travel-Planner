@@ -12,12 +12,12 @@ import { AuthProvider } from "./context/AuthContext";
 // It wraps the entire App and keeps track of the URL in the browser.
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <ItineraryProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ItineraryProvider>
         <BlogProvider>
           <App />
         </BlogProvider>
-      </AuthProvider>
-    </ItineraryProvider>
+      </ItineraryProvider>
+    </AuthProvider>
   </BrowserRouter>
 );
