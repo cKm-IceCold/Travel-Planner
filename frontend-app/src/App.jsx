@@ -21,6 +21,12 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         {/* "/booking-success" → Success page */}
         <Route path="/booking-success" element={<BookingSuccess />} />
+        {/* "/blogs" → Blog List */}
+        <Route path="/blogs" element={<Blogs />} />
+        {/* "/blogs/:id" → Blog Details */}
+        <Route path="/blogs/:id" element={<BlogDetails />} />
+        {/* "/admin" → Admin Dashboard */}
+        <Route path="/admin" element={<AdminBlog />} />
       </Routes>
       <Footer />
     </>
@@ -32,6 +38,9 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import BookingSuccess from "./pages/BookingSuccess";
 import Checkout from "./pages/Checkout";
+import Blogs from "./pages/Blogs";
+import AdminBlog from "./pages/AdminBlog";
+import BlogDetails from "./pages/BlogDetails";
 
 const PageTitleUpdater = () => {
   const location = useLocation();
@@ -45,6 +54,9 @@ const PageTitleUpdater = () => {
     else if (path === "/itinerary") title = "My Trip | Travel Planner";
     else if (path === "/checkout") title = "Secure Checkout | Travel Planner";
     else if (path === "/booking-success") title = "Booking Confirmed! | Travel Planner";
+    else if (path === "/blogs" && path.split("/").length === 2) title = "Travel Stories | Travel Planner";
+    else if (path.includes("/blogs/")) title = "Story | Travel Planner";
+    else if (path === "/admin") title = "Admin Dashboard | Travel Planner";
 
     document.title = title;
   }, [location]);

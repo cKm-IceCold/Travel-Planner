@@ -15,6 +15,8 @@ const Checkout = () => {
         cvc: "",
     });
 
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const [errors, setErrors] = useState({});
 
     // Calculate Total
@@ -42,11 +44,12 @@ const Checkout = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
+            setIsProcessing(true);
             // Simulate Payment Processing
             setTimeout(() => {
                 clearItinerary();
                 navigate("/booking-success");
-            }, 1000);
+            }, 2000); // 2 seconds for dramatic effect
         }
     };
 
@@ -151,9 +154,13 @@ const Checkout = () => {
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl mt-8 hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30"
+                            disabled={isProcessing}
+                            className={`w-full font-bold py-4 rounded-xl mt-8 transition-all shadow-lg ${isProcessing
+                                ? "bg-slate-400 text-white cursor-not-allowed"
+                                : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-500/30"
+                                }`}
                         >
-                            Confirm Payment (${total.toLocaleString()})
+                            {isProcessing ? "Processing Payment..." : `Confirm Payment ($${total.toLocaleString()})`}
                         </button>
                     </form>
                 </div>

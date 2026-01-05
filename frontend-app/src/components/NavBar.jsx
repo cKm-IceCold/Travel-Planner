@@ -20,6 +20,9 @@ const NavBar = () => {
         <Link to="/" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
           Explore
         </Link>
+        <Link to="/blogs" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+          Stories
+        </Link>
         <Link to="/itinerary" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-2">
           Itinerary
           {itemCount > 0 && (
@@ -62,6 +65,9 @@ const NavBar = () => {
         <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 shadow-xl p-6 md:hidden flex flex-col gap-4 animate-in slide-in-from-top-2">
           <Link to="/" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             Explore
+          </Link>
+          <Link to="/blogs" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+            Stories
           </Link>
           <Link to="/itinerary" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50 flex justify-between items-center" onClick={() => setIsMenuOpen(false)}>
             Itinerary
