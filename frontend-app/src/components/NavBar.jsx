@@ -39,11 +39,18 @@ const NavBar = () => {
         {currentUser ? (
           <div className="flex items-center gap-4">
             <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img
-                src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || 'User'}`}
-                alt="Avatar"
-                className="w-8 h-8 rounded-full border border-slate-200"
-              />
+              <div className="relative">
+                <img
+                  src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || 'User'}`}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full border border-slate-200"
+                />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm animate-in zoom-in">
+                    {itemCount}
+                  </span>
+                )}
+              </div>
               <span className="text-sm font-bold text-slate-700">{currentUser.displayName || 'User'}</span>
             </Link>
             <button

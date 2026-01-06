@@ -9,7 +9,8 @@ import {
     doc,
     updateDoc,
     arrayUnion,
-    getDocs
+    getDocs,
+    deleteDoc
 } from "firebase/firestore";
 import { useAuth } from "./AuthContext";
 
@@ -165,6 +166,28 @@ export const TripProvider = ({ children }) => {
         }
     };
 
+    const finalizeTrip = async (tripId) => {
+        try {
+            const tripRef = doc(db, "trips", tripId);
+            await updateDoc(tripRef, {
+                status: "booked"
+            });
+        } catch (error) {
+            console.error("Error finalizing trip:", error);
+            throw error;
+        }
+    };
+
+    const deleteTrip = async (tripId) => {
+        try {
+            const tripRef = doc(db, "trips", tripId);
+            await deleteDoc(tripRef);
+        } catch (error) {
+            console.error("Error deleting trip:", error);
+            throw error;
+        }
+    };
+
     const value = {
         trips,
         createTrip,
@@ -174,6 +197,8 @@ export const TripProvider = ({ children }) => {
         toggleTask,
         voteHotel,
         addChatMessage,
+        finalizeTrip,
+        deleteTrip,
         loading
     };
 

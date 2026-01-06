@@ -1,10 +1,21 @@
 import { useState } from "react";
 import { useItinerary } from "../context/ItineraryContext";
-import { useNavigate } from "react-router-dom";
+import { useTrips } from "../context/TripContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Checkout = () => {
     const { itinerary, clearItinerary, moveToHistory } = useItinerary();
+    const { trips, finalizeTrip } = useTrips();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Parse tripId from URL
+    const queryParams = new URLSearchParams(location.search);
+    const tripId = queryParams.get("tripId");
+    const trip = trips.find(t => t.id === tripId);
+
+    // Determine current items to book
+    const bookingItems = trip ? [...trip.itinerary, ...trip.hotels] : itinerary;
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -20,8 +31,8 @@ const Checkout = () => {
     const [errors, setErrors] = useState({});
 
     // Calculate Total
-    const total = itinerary.reduce((sum, item) => {
-        const price = Number(item.price.replace(/[^0-9.-]+/g, ""));
+    const total = bookingItems.reduce((sum, item) => {
+        const price = Number(item.price?.replace(/[^0-9.-]+/g, "") || 0);
         return sum + price;
     }, 0);
 
@@ -45,18 +56,29 @@ const Checkout = () => {
         e.preventDefault();
         if (validate()) {
             setIsProcessing(true);
-            // 1. Save to History
-            await moveToHistory(itinerary);
 
-            // 2. Simulate Payment Processing
-            setTimeout(() => {
-                clearItinerary();
-                navigate("/booking-success");
-            }, 2000);
+            try {
+                if (tripId) {
+                    // Group Trip Finalization
+                    await finalizeTrip(tripId);
+                } else {
+                    // Personal Wishlist Finalization
+                    await moveToHistory(itinerary);
+                    clearItinerary();
+                }
+
+                // Simulate Payment Processing delay
+                setTimeout(() => {
+                    navigate("/booking-success");
+                }, 2000);
+            } catch (error) {
+                alert("Payment failed. Please try again.");
+                setIsProcessing(false);
+            }
         }
     };
 
-    if (itinerary.length === 0) {
+    if (bookingItems.length === 0) {
         navigate("/");
         return null;
     }
@@ -173,12 +195,12 @@ const Checkout = () => {
                     <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 sticky top-24">
                         <h3 className="font-bold text-lg mb-4 text-slate-800">Order Summary</h3>
                         <div className="space-y-4 max-h-60 overflow-y-auto mb-6 pr-2">
-                            {itinerary.map((item) => (
-                                <div key={item.id} className="flex gap-4">
-                                    <img src={item.image} alt={item.city} className="w-16 h-16 rounded-lg object-cover" />
+                            {bookingItems.map((item, idx) => (
+                                <div key={idx} className="flex gap-4">
+                                    <img src={item.image} alt={item.city || item.name} className="w-16 h-16 rounded-lg object-cover" />
                                     <div>
-                                        <p className="font-bold text-sm text-slate-800">{item.city}</p>
-                                        <p className="text-xs text-slate-500">{item.country}</p>
+                                        <p className="font-bold text-sm text-slate-800">{item.city || item.name}</p>
+                                        <p className="text-xs text-slate-500">{item.country || 'Accommodation'}</p>
                                         <p className="text-sm text-blue-600 font-semibold">{item.price}</p>
                                     </div>
                                 </div>

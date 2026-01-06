@@ -73,27 +73,37 @@ const Itinerary = () => {
 
                 {/* SUMMARY CARD */}
                 <div className="lg:col-span-1">
-                    <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl sticky top-24">
-                        <h3 className="text-xl font-bold mb-6">Trip Summary</h3>
+                    <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl sticky top-24 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                        <h3 className="text-xl font-bold mb-6 relative z-10">Estimate Summary</h3>
 
-                        <div className="flex justify-between mb-4 text-slate-300">
-                            <span>Destinations</span>
-                            <span>{itinerary.length}</span>
+                        <div className="space-y-4 relative z-10 text-slate-300 text-sm">
+                            <div className="flex justify-between">
+                                <span>Selected Places</span>
+                                <span>{itinerary.length}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Travel Insurance</span>
+                                <span className="text-blue-400">Included</span>
+                            </div>
                         </div>
-                        <div className="h-px bg-slate-700 my-4"></div>
 
-                        <div className="flex justify-between items-end mb-8">
-                            <span className="font-medium">Estimated Total</span>
-                            <span className="text-3xl font-bold">${calculateTotal().toLocaleString()}</span>
+                        <div className="h-px bg-slate-700 my-6 relative z-10"></div>
+
+                        <div className="mb-8 relative z-10">
+                            <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">Estimated Total</p>
+                            <span className="text-4xl font-bold">${calculateTotal().toLocaleString()}</span>
                         </div>
 
                         <button
                             onClick={handleBooking}
-                            className="w-full bg-white text-slate-900 font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors shadow-lg"
+                            className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg active:scale-95"
                         >
-                            Proceed to Checkout
+                            Finalize & Checkout
                         </button>
-                        <p className="text-center text-xs text-slate-500 mt-4">Taxes and fees calculated at next step.</p>
+                        <p className="text-center text-[10px] text-slate-500 mt-4 leading-relaxed">
+                            Secured by TravelGuard. No hidden fees. Taxes included.
+                        </p>
                     </div>
                 </div>
 

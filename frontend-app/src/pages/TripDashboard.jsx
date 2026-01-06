@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTrips } from '../context/TripContext';
 import { useAuth } from '../context/AuthContext';
 
 const TripDashboard = () => {
     const { id } = useParams();
-    const { trips, updateTripItem, inviteCollaborator, addTask, toggleTask, voteHotel, addChatMessage } = useTrips();
+    const navigate = useNavigate();
+    const { trips, updateTripItem, inviteCollaborator, addTask, toggleTask, voteHotel, addChatMessage, deleteTrip } = useTrips();
     const { currentUser } = useAuth();
     const [inviteEmail, setInviteEmail] = useState("");
 
@@ -32,9 +33,25 @@ const TripDashboard = () => {
 
                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                     <div className="w-full lg:w-auto">
-                        <Link to="/trips" className="text-blue-600 font-bold text-xs sm:text-sm mb-4 flex items-center gap-1 hover:underline">
-                            ← Back to all trips
-                        </Link>
+                        <div className="flex justify-between items-center mb-4">
+                            <Link to="/trips" className="text-blue-600 font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline">
+                                ← Back to all trips
+                            </Link>
+                            <button
+                                onClick={async () => {
+                                    if (window.confirm("Are you sure you want to delete this trip?")) {
+                                        await deleteTrip(id);
+                                        navigate("/trips");
+                                    }
+                                }}
+                                className="text-red-500 font-bold text-xs sm:text-sm flex items-center gap-1 hover:text-red-700 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+                                Delete Trip
+                            </button>
+                        </div>
                         <h1 className="text-3xl sm:text-5xl font-serif font-bold text-slate-900 mb-2 leading-tight">{trip.title}</h1>
                         <p className="text-sm text-slate-500 flex items-center gap-2">
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -154,6 +171,50 @@ const TripDashboard = () => {
                             </div>
                         )}
                     </section>
+
+                    {/* Booking Finalization */}
+                    {trip.status === 'planning' && (
+                        <section className="bg-blue-600 p-8 rounded-3xl shadow-xl text-white relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                                <div>
+                                    <h3 className="text-2xl font-serif font-bold mb-2">Ready to lock it in? ✈️</h3>
+                                    <p className="text-blue-100 text-sm">Finalize your group's planning and proceed to checkout.</p>
+                                </div>
+                                <div className="flex flex-col items-center md:items-end gap-2 text-right">
+                                    <p className="text-xs uppercase font-bold tracking-widest text-blue-200">Group Total</p>
+                                    <p className="text-3xl font-bold">
+                                        ${[...trip.itinerary, ...trip.hotels].reduce((sum, item) => {
+                                            const price = Number(item.price?.replace(/[^0-9.-]+/g, "") || 0);
+                                            return sum + price;
+                                        }, 0).toLocaleString()}
+                                    </p>
+                                    <Link
+                                        to={`/checkout?tripId=${id}`}
+                                        className="bg-white text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg mt-2"
+                                    >
+                                        Finalize & Book
+                                    </Link>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {trip.status === 'booked' && (
+                        <section className="bg-green-600 p-8 rounded-3xl shadow-xl text-white">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-white/20 p-3 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-serif font-bold">This trip is Booked! 🎉</h3>
+                                    <p className="text-green-100">Everything is confirmed. Get ready for an amazing journey!</p>
+                                </div>
+                            </div>
+                        </section>
+                    )}
                 </div>
 
                 {/* Sidebar: Checklist & Chat */}
