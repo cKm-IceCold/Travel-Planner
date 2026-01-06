@@ -13,7 +13,7 @@ const NavBar = () => {
     <nav className="flex items-center justify-between px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
 
       {/* 1. Brand: LOGO */}
-      <Link to="/" className="text-2xl font-serif font-bold text-blue-600 cursor-pointer flex items-center gap-2">
+      <Link to="/" className="text-xl md:text-2xl font-serif font-bold text-blue-600 cursor-pointer flex items-center gap-1 md:gap-2">
         Travel<span className="text-slate-800">Planner</span>
       </Link>
 
@@ -34,7 +34,7 @@ const NavBar = () => {
         </Link>
       </div>
 
-      {/* 3. Desktop Auth Buttons (Updated) */}
+      {/* 3. Desktop Auth Buttons */}
       <div className="hidden md:flex items-center gap-4">
         {currentUser ? (
           <div className="flex items-center gap-4">
@@ -68,19 +68,35 @@ const NavBar = () => {
         )}
       </div>
 
-      {/* 4. Mobile Menu Button (Hamburger) (Updated) */}
-      <button
-        className="md:hidden text-slate-600 focus:outline-none"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
-          {isMenuOpen ? (
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          )}
-        </svg>
-      </button>
+      {/* 4. Mobile Controls (Avatar + Hamburger) */}
+      <div className="flex md:hidden items-center gap-4">
+        {currentUser && (
+          <Link to="/profile" className="relative">
+            <img
+              src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || 'User'}`}
+              alt="Avatar"
+              className="w-8 h-8 rounded-full border border-slate-200"
+            />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm animate-in zoom-in">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+        )}
+        <button
+          className="text-slate-600 focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+            {isMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            )}
+          </svg>
+        </button>
+      </div>
 
       {/* 5. Mobile Menu Overlay (Updated) */}
       {isMenuOpen && (
