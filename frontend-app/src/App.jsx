@@ -1,71 +1,30 @@
-import { Routes, Route } from "react-router-dom"; // Needed to define routes
-import Home from "./pages/Home"; // Home page
-import DestinationDetails from "./pages/DestinationDetails"; // Details page
-import NavBar from "./components/NavBar"; // Import NavBar
-import Itinerary from "./pages/Itinerary"; // Import Itinerary page
-import Footer from "./components/Footer"; // Import Footer
-
-function App() {
-  return (
-    <>
-      <PageTitleUpdater />
-      <NavBar />
-      <Routes>
-        {/* "/" → Home page */}
-        <Route path="/" element={<Home />} />
-        {/* "/destinations/:id" → Destination Details page */}
-        <Route path="/destinations/:id" element={<DestinationDetails />} />
-        {/* "/itinerary" → Itinerary Summary page */}
-        <Route path="/itinerary" element={<Itinerary />} />
-        {/* "/checkout" → Checkout page */}
-        <Route path="/checkout" element={<Checkout />} />
-        {/* "/booking-success" → Success page */}
-        <Route path="/booking-success" element={<BookingSuccess />} />
-        {/* "/blogs" → Blog List */}
-        <Route path="/blogs" element={<Blogs />} />
-        {/* "/blogs/:id" → Blog Details */}
-        <Route path="/blogs/:id" element={<BlogDetails />} />
-        {/* "/admin" → Admin Dashboard (Protected) */}
-        <Route path="/admin" element={
-          <ProtectedRoute>
-            <AdminBlog />
-          </ProtectedRoute>
-        } />
-        {/* "/logout" logic is handled in NavBar, but let's add Profile */}
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } />
-      </Routes>
-      <Footer />
-    </>
-  );
-}
-
-// Helper to update Title based on Route (Simple implementation)
-import { useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import BookingSuccess from "./pages/BookingSuccess";
+import { useAuth } from "./context/AuthContext";
+
+// Pages
+import Home from "./pages/Home";
+import DestinationDetails from "./pages/DestinationDetails";
+import Itinerary from "./pages/Itinerary";
 import Checkout from "./pages/Checkout";
+import BookingSuccess from "./pages/BookingSuccess";
 import Blogs from "./pages/Blogs";
 import AdminBlog from "./pages/AdminBlog";
 import BlogDetails from "./pages/BlogDetails";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import Profile from "./pages/Profile";
-import { useAuth } from "./context/AuthContext";
-import { Navigate } from "react-router-dom";
+
+// Components
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
-
-  if (loading) return null; // or a spinner
-
+  if (loading) return null;
   if (!currentUser) {
     return <Navigate to="/login" />;
   }
-
   return children;
 };
 
@@ -93,5 +52,39 @@ const PageTitleUpdater = () => {
 
   return null;
 };
+
+function App() {
+  return (
+    <>
+      <PageTitleUpdater />
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/destinations/:id" element={<DestinationDetails />} />
+        <Route path="/itinerary" element={<Itinerary />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:id" element={<BlogDetails />} />
+
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminBlog />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+      <Footer />
+    </>
+  );
+}
 
 export default App;
