@@ -14,6 +14,8 @@ import BlogDetails from "./pages/BlogDetails";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import Trips from "./pages/Trips";
+import TripDashboard from "./pages/TripDashboard";
 
 // Components
 import NavBar from "./components/NavBar";
@@ -40,14 +42,29 @@ const PageTitleUpdater = () => {
     else if (path === "/itinerary") title = "My Trip | Travel Planner";
     else if (path === "/checkout") title = "Secure Checkout | Travel Planner";
     else if (path === "/booking-success") title = "Booking Confirmed! | Travel Planner";
-    else if (path === "/blogs" && path.split("/").length === 2) title = "Travel Stories | Travel Planner";
-    else if (path.includes("/blogs/")) title = "Story | Travel Planner";
+    else if (path === "/community" && path.split("/").length === 2) title = "Community Feed | Travel Planner";
+    else if (path.includes("/community/")) title = "Social Story | Travel Planner";
     else if (path === "/admin") title = "Admin Dashboard | Travel Planner";
     else if (path === "/login") title = "Login | Travel Planner";
     else if (path === "/signup") title = "Create Account | Travel Planner";
     else if (path === "/profile") title = "My Profile | Travel Planner";
+    else if (path === "/trips") title = "My Trips | Travel Planner";
+    else if (path.includes("/trips/")) title = "Trip Planning | Travel Planner";
 
     document.title = title;
+
+    // Handle Scroll to Hash
+    if (location.hash) {
+      setTimeout(() => {
+        const id = location.hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100); // Small delay to ensure component is mounted
+    } else {
+      window.scrollTo(0, 0); // Scroll to top on normal navigation
+    }
   }, [location]);
 
   return null;
@@ -62,10 +79,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/destinations/:id" element={<DestinationDetails />} />
         <Route path="/itinerary" element={<Itinerary />} />
+        <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
+        <Route path="/trips/:id" element={<ProtectedRoute><TripDashboard /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/booking-success" element={<BookingSuccess />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blogs/:id" element={<BlogDetails />} />
+        <Route path="/community" element={<Blogs />} />
+        <Route path="/community/:id" element={<BlogDetails />} />
 
         <Route path="/admin" element={
           <ProtectedRoute>

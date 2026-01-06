@@ -12,7 +12,7 @@ const BlogDetails = () => {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
                 <h2 className="text-3xl font-serif font-bold text-slate-800 mb-4">Story Not Found</h2>
-                <Link to="/blogs" className="text-blue-600 hover:text-blue-800 underline">Return to Stories</Link>
+                <Link to="/community" className="text-blue-600 hover:text-blue-800 underline">Return to Community</Link>
             </div>
         );
     }
@@ -35,6 +35,7 @@ const BlogDetails = () => {
                             {blog.title}
                         </h1>
                         <div className="flex items-center gap-4 text-sm md:text-base font-medium text-white/90">
+                            {blog.authorPhoto && <img src={blog.authorPhoto} className="w-8 h-8 rounded-full border border-white/20" alt={blog.author} />}
                             <span>{blog.date}</span>
                             <span>•</span>
                             <span>By {blog.author}</span>
@@ -45,11 +46,11 @@ const BlogDetails = () => {
 
             {/* CONTENT BODY */}
             <div className="max-w-3xl mx-auto px-6 py-12">
-                <Link to="/blogs" className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-blue-600 mb-8 transition-colors">
+                <Link to="/community" className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-blue-600 mb-8 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 mr-1">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                     </svg>
-                    Back to Stories
+                    Back to Feed
                 </Link>
 
                 <p className="text-xl text-slate-600 leading-relaxed mb-8 font-serif border-l-4 border-blue-600 pl-4 italic">

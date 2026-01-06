@@ -22,20 +22,16 @@ const NavBar = () => {
         <Link to="/" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
           Explore
         </Link>
-        <Link to="/blogs" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
-          Stories
+        <Link to="/community" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+          Community
         </Link>
-        <Link to="/itinerary" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-2">
-          Itinerary
-          {itemCount > 0 && (
-            <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-              {itemCount}
-            </span>
-          )}
+        <Link to="/trips" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-2">
+          My Trips
+          <span className="bg-blue-100 text-blue-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">Groups</span>
         </Link>
-        <a href="#about" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+        <Link to="/#about" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
           About
-        </a>
+        </Link>
       </div>
 
       {/* 3. Desktop Auth Buttons (Updated) */}
@@ -85,16 +81,16 @@ const NavBar = () => {
           <Link to="/" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             Explore
           </Link>
-          <Link to="/blogs" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
-            Stories
+          <Link to="/community" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+            Community
           </Link>
-          <Link to="/itinerary" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50 flex justify-between items-center" onClick={() => setIsMenuOpen(false)}>
-            Itinerary
-            {itemCount > 0 && <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">{itemCount} items</span>}
+          <Link to="/trips" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50 flex justify-between items-center" onClick={() => setIsMenuOpen(false)}>
+            My Trips
+            <span className="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full font-bold">Collaborative</span>
           </Link>
-          <a href="#about" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+          <Link to="/#about" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             About
-          </a>
+          </Link>
           {currentUser && <Link to="/profile" className="text-lg font-semibold text-slate-800 py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>Profile</Link>}
           <div className="flex flex-col gap-3 mt-4">
             {currentUser ? (

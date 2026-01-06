@@ -1,31 +1,25 @@
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import destinations from "../components/data/destinations";
 import { useItinerary } from "../context/ItineraryContext";
+import { useTrips } from "../context/TripContext";
 import { getHotelsByDestination } from "../components/data/hotels";
 import HotelCard from "../components/HotelCard";
 
 const DestinationDetails = () => {
   const { id } = useParams();
   const { addToItinerary, isInItinerary } = useItinerary();
+  const { trips, updateTripItem } = useTrips();
+  const [showTripSelect, setShowTripSelect] = useState(false);
+  const [selectedHotelForTrip, setSelectedHotelForTrip] = useState(null);
 
-  /* 
-   * Handle ID lookup for both:
-   * 1. Local Data (Numbers, e.g., 1, 2)
-   * 2. API Data (Strings, e.g., "CMUC5234")
-   * 
-   * Ideal Solution: We should fetch from API if not found in local.
-   * For now, we'll try to find it in the local list, and if not, show a generic "API Result" view 
-   * since we don't have a "Get Destination by ID" API endpoint wired up yet.
-   */
   const localDestination = destinations.find(
     (d) => String(d.id) === String(id)
   );
 
-  // If it's a real API result (not in local file), we render a generic view
-  // In a real app, we would call `amadeus.getDestinationDetails(id)` here.
   const destination = localDestination || {
     id: id,
-    city: "Unknown City", // We'd need to pass this via state or fetch it
+    city: "Unknown City",
     country: "World",
     image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
     price: "$TBD",
@@ -34,7 +28,6 @@ const DestinationDetails = () => {
     label: "API Result"
   };
 
-  // If we really can't render anything useful (though the fallback above handles most cases)
   if (!destination) {
     return (
       <div className="flex items-center justify-center h-[50vh]">
@@ -44,6 +37,23 @@ const DestinationDetails = () => {
   }
 
   const isAdded = isInItinerary(destination.id);
+
+  const handleAddToTrip = async (tripId, item, type = 'itinerary') => {
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+
+    const currentList = trip[type] || [];
+    const newList = [...currentList, { ...item, type }]; // add type metadata
+
+    try {
+      await updateTripItem(tripId, type, newList);
+      setShowTripSelect(false);
+      setSelectedHotelForTrip(null);
+      alert(`Added to ${trip.title}!`);
+    } catch (error) {
+      alert("Failed to add to trip");
+    }
+  };
 
   return (
     <div>
@@ -70,8 +80,6 @@ const DestinationDetails = () => {
 
       {/* 2. DETAILS CONTENT */}
       <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-12">
-
-        {/* Left Column: Description & Attractions */}
         <div className="md:col-span-2 space-y-8">
           <div>
             <Link to="/" className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-blue-600 mb-6 transition-colors">
@@ -82,9 +90,8 @@ const DestinationDetails = () => {
             </Link>
             <h2 className="text-3xl font-serif font-bold text-slate-800 mb-4">About {destination.city}</h2>
             <p className="text-slate-600 leading-relaxed text-lg">
-              Experience the magic of {destination.city}. Known for its stunning architecture and vibrant culture,
-              this destination offers an unforgettable journey for every traveler.
-              {/* Mock description since we didn't add one to data yet */}
+              Discover the unique charm of {destination.city}. This destination is known for its breathtaking landscapes,
+              rich cultural heritage, and unforgettable experiences that cater to every type of traveler.
             </p>
           </div>
 
@@ -110,38 +117,106 @@ const DestinationDetails = () => {
               <span className="text-slate-400 mb-1">/ person</span>
             </div>
 
-            <button
-              onClick={() => addToItinerary(destination)}
-              disabled={isAdded}
-              className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg transform active:scale-95 ${isAdded
-                ? "bg-green-100 text-green-700 cursor-default border border-green-200"
-                : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-200"
-                }`}
-            >
-              {isAdded ? "✓ Added to Itinerary" : "Add to Itinerary"}
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={() => addToItinerary(destination)}
+                disabled={isAdded}
+                className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-md transform active:scale-95 ${isAdded
+                  ? "bg-green-100 text-green-700 cursor-default border border-green-200"
+                  : "bg-slate-800 text-white hover:bg-slate-900"
+                  }`}
+              >
+                {isAdded ? "✓ In Personal Wishlist" : "Save for Myself"}
+              </button>
+
+              <div className="relative">
+                <button
+                  onClick={() => setShowTripSelect(!showTripSelect)}
+                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg transition-all shadow-lg hover:bg-blue-700 hover:shadow-blue-200"
+                >
+                  Add to Group Trip
+                </button>
+
+                {showTripSelect && (
+                  <div className="absolute top-full left-0 w-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                    <div className="p-4 border-b border-slate-100">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select a Trip</p>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {trips.length === 0 ? (
+                        <Link to="/trips" className="block p-4 text-sm text-blue-600 hover:bg-blue-50 font-bold text-center">
+                          + Create your first trip
+                        </Link>
+                      ) : (
+                        trips.map(trip => (
+                          <button
+                            key={trip.id}
+                            onClick={() => handleAddToTrip(trip.id, destination)}
+                            className="w-full text-left p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                          >
+                            <p className="font-bold text-slate-800">{trip.title}</p>
+                            <p className="text-xs text-slate-500">{trip.collaborators.length} collaborators</p>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
             <p className="text-center text-xs text-slate-400 mt-4">
               Free cancellation up to 24h before trip.
             </p>
           </div>
         </div>
-
       </div>
 
       {/* 3. WHERE TO STAY */}
       <div className="bg-slate-50 py-16 border-t border-slate-200">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-3xl font-serif font-bold text-slate-800 mb-8">Where to Stay</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {getHotelsByDestination(destination.id).map(hotel => (
-              <HotelCard key={hotel.id} hotel={hotel} />
+              <div key={hotel.id} className="relative group">
+                <HotelCard hotel={hotel} />
+                <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button
+                    onClick={() => setSelectedHotelForTrip(hotel)}
+                    className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg hover:bg-blue-700"
+                  >
+                    + Add to Group Trip
+                  </button>
+                </div>
+
+                {selectedHotelForTrip?.id === hotel.id && (
+                  <div className="absolute top-0 left-0 w-full h-full bg-white/95 backdrop-blur-sm rounded-2xl z-20 flex flex-col p-4 animate-in fade-in">
+                    <div className="flex justify-between items-center mb-4">
+                      <p className="text-xs font-bold text-slate-400 uppercase">Add to Trip</p>
+                      <button onClick={() => setSelectedHotelForTrip(null)} className="text-slate-400 hover:text-slate-600 font-bold text-xs">Close</button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto space-y-2">
+                      {trips.length === 0 ? (
+                        <Link to="/trips" className="block text-center text-blue-600 font-bold text-xs p-2">Create Trip First</Link>
+                      ) : (
+                        trips.map(trip => (
+                          <button
+                            key={trip.id}
+                            onClick={() => handleAddToTrip(trip.id, hotel, 'hotels')}
+                            className="w-full text-left p-3 hover:bg-blue-50 rounded-xl transition-colors border border-slate-100"
+                          >
+                            <p className="font-bold text-slate-800 text-sm truncate">{trip.title}</p>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
       </div>
-
     </div>
   );
 };

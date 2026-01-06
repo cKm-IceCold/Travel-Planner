@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { initialBlogs } from "../components/data/blogs";
 import { db } from "../services/firebase";
-import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "./AuthContext";
 
 const BlogContext = createContext();
@@ -42,8 +42,13 @@ export const BlogProvider = ({ children }) => {
         try {
             const blogEntry = {
                 id: Date.now(), // timestamp for sorting
+                createdAt: new Date(),
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                 author: currentUser?.displayName || currentUser?.email || "Anonymous",
+                authorPhoto: currentUser?.photoURL || null,
+                userId: currentUser?.uid,
+                likes: 0,
+                likedBy: [],
                 ...newBlog
             };
 
@@ -54,9 +59,33 @@ export const BlogProvider = ({ children }) => {
         }
     };
 
+    const likePost = async (blogId) => {
+        if (!currentUser) return;
+        const post = blogs.find(b => b.docId === blogId);
+        if (!post) return;
+
+        const likedBy = post.likedBy || [];
+        const isLiked = likedBy.includes(currentUser.uid);
+
+        const newLikedBy = isLiked
+            ? likedBy.filter(uid => uid !== currentUser.uid)
+            : [...likedBy, currentUser.uid];
+
+        try {
+            const postRef = doc(db, "blogs", blogId);
+            await updateDoc(postRef, {
+                likedBy: newLikedBy,
+                likes: newLikedBy.length
+            });
+        } catch (error) {
+            console.error("Error updating likes:", error);
+        }
+    };
+
     const value = {
         blogs,
         addBlog,
+        likePost,
         loading
     };
 

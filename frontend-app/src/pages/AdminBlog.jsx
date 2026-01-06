@@ -32,9 +32,9 @@ const AdminBlog = () => {
             };
 
             await addBlog(blogPayload);
-            navigate('/blogs'); // go back to list
+            navigate('/community'); // go back to list
         } catch (error) {
-            alert("Failed to publish: " + error.message);
+            alert("Failed to post: " + error.message);
         } finally {
             setPublishing(false);
         }
@@ -44,8 +44,8 @@ const AdminBlog = () => {
         <div className="pt-32 pb-20 max-w-3xl mx-auto px-6">
             <div className="bg-white p-10 rounded-3xl shadow-2xl border border-slate-100">
                 <h1 className="text-3xl font-serif font-bold text-slate-800 mb-8 flex items-center gap-3">
-                    <span className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-lg">✎</span>
-                    Write New Story
+                    <span className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-lg">🌎</span>
+                    Share Your Travel Story
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -124,14 +124,14 @@ const AdminBlog = () => {
                     </div>
 
                     <div className="pt-4 flex items-center justify-end gap-4">
-                        <button type="button" onClick={() => navigate('/blogs')} className="text-slate-500 font-bold hover:text-slate-700">Cancel</button>
+                        <button type="button" onClick={() => navigate('/community')} className="text-slate-500 font-bold hover:text-slate-700">Cancel</button>
                         <button
                             type="submit"
                             disabled={publishing}
                             className={`bg-blue-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg ${publishing ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
                                 }`}
                         >
-                            {publishing ? "Publishing..." : "Publish Story"}
+                            {publishing ? "Posting..." : "Share with Community"}
                         </button>
                     </div>
 
